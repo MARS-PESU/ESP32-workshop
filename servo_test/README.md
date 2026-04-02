@@ -1,3 +1,4 @@
+<img width="888" height="508" alt="image" src="https://github.com/user-attachments/assets/be1695ba-e759-4c63-bf86-75626dfd9348" />
 
 
 ```cpp
@@ -27,3 +28,5 @@ void loop() {
   delay(2000);
 }
 ```
+
+<img width="564" height="569" alt="image" src="https://github.com/user-attachments/assets/4dd8ea2c-24d0-4586-b369-db0f04e09b13" />
