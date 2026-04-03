@@ -9,6 +9,7 @@ This document explains how to install the Arduino Software (IDE) on Windows mach
 ### Download the Arduino Software (IDE)
 
 Get the latest version from the [download page](https://www.arduino.cc/en/Main/Software). You should choose  the Installer (.exe) package. We suggest you use the first one that installs directly everything you need to use in the Arduino Software (IDE), including the drivers. 
+download the exe, then open the file by double clicking it.
 
 When the download finishes, proceed with the installation and please allow the driver installation process when you get a warning from the operating system.
 
