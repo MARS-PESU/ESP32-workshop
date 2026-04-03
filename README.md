@@ -50,7 +50,7 @@ Before starting, install the following:
 
 Please follow the folowing links for installation on your device.
 - Windows systems: https://github.com/MARS-PESU/ESP32-workshop/blob/main/installation/windows.md
-- MAC systems: coming soon
+- MAC systems: https://github.com/MARS-PESU/ESP32-workshop/blob/main/installation/mac_systems.md
 ---
 
 ## Design Perspective
