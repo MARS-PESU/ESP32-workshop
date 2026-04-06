@@ -73,6 +73,11 @@ void loop() {
 }
 ```
 
+## Circuit
+
+<img width="604" height="584" alt="image" src="https://github.com/user-attachments/assets/dfaf2265-0c04-4fa8-9c61-df1529f0a230" />
+
+
 ---
 
 ## Output Preview
