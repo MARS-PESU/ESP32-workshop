@@ -44,42 +44,56 @@ This creates a simple way to sense proximity and movement.
 ## Code
 
 ```cpp
-#define TRIG_PIN 5
-#define ECHO_PIN 18
+
+const int trigPin = 5;
+const int echoPin = 18;
+
+//define sound speed in cm/uS
+#define SOUND_SPEED 0.034
+#define CM_TO_INCH 0.393701
 
 long duration;
-float distance;
+float distanceCm;
+float distanceInch;
 
 void setup() {
-  Serial.begin(115200);
-  
-  pinMode(TRIG_PIN, OUTPUT);
-  pinMode(ECHO_PIN, INPUT);
+  Serial.begin(115200); // Starts the serial communication
+  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
+  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
 }
 
 void loop() {
-  // Clear trigger
-  digitalWrite(TRIG_PIN, LOW);
+  // Clears the trigPin
+  digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
-
-  // Send short pulse
-  digitalWrite(TRIG_PIN, HIGH);
+  // Sets the trigPin on HIGH state for 10 micro seconds
+  digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
-  digitalWrite(TRIG_PIN, LOW);
-
-  // Read return signal
-  duration = pulseIn(ECHO_PIN, HIGH);
-
-  // Convert to distance
-  distance = duration * 0.034 / 2;
-
-  Serial.print("Distance: ");
-  Serial.print(distance);
-  Serial.println(" cm");
-
-  delay(500);
+  digitalWrite(trigPin, LOW);
+  
+  // Reads the echoPin, returns the sound wave travel time in microseconds
+  duration = pulseIn(echoPin, HIGH);
+  
+  // Calculate the distance
+  distanceCm = duration * SOUND_SPEED/2;
+  
+  // Convert to inches
+  distanceInch = distanceCm * CM_TO_INCH;
+  
+  // Prints the distance in the Serial Monitor
+  Serial.print("Distance (cm): ");
+  Serial.println(distanceCm);
+  Serial.print("Distance (inch): ");
+  Serial.println(distanceInch);
+  
+  delay(1000);
 }
 ```
+
+## Circuit
+
+<img width="846" height="688" alt="image" src="https://github.com/user-attachments/assets/6402acc5-1dc3-4969-8884-a860c4dbe5b9" />
+
 
 ---
 
