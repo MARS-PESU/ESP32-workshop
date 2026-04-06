@@ -1,8 +1,9 @@
+'''c++
 // ESP32 PWM Buzzer Example
-// Connect buzzer + to GPIO 18
+// Connect buzzer + to GPIO 25
 // Connect buzzer - to GND
 
-const int buzzerPin = 18;
+const int buzzerPin = 25;
 
 // Frequencies for different tunes
 int tunes[] = {
@@ -44,3 +45,4 @@ void loop() {
     currentTune = 0;
   }
 }
+'''
