@@ -81,6 +81,11 @@ void loop() {
 
 ---
 
+## Circuit
+
+<img width="536" height="336" alt="image" src="https://github.com/user-attachments/assets/c34e03c9-e979-4dad-9b68-7f3b6a09dec9" />
+
+
 ## Output
 
 When the button is pressed:
