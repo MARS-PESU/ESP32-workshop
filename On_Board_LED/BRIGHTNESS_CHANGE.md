@@ -46,31 +46,25 @@ The code slowly moves through these values to create a smooth light transition.
 ## Code
 
 ```cpp
-// ESP32 PWM LED brightness control
-
-const int ledPin = 2;        // LED connected to GPIO 2
-const int pwmChannel = 0;    
-const int freq = 5000;       
-const int resolution = 8;    // 8-bit resolution (0 to 255)
+const int ledPin = 2;      // LED pin
+const int freq = 5000;     
+const int resolution = 8;  // 8-bit resolution (0-255)
 
 void setup() {
-  // Configure PWM
-  ledcSetup(pwmChannel, freq, resolution);
-  
-  // Attach the LED pin to the PWM channel
-  ledcAttachPin(ledPin, pwmChannel);
+  // Attach LED pin to PWM with frequency and resolution
+  ledcAttach(ledPin, freq, resolution);
 }
 
 void loop() {
-  // Increase brightness
+  // Fade in
   for (int dutyCycle = 0; dutyCycle <= 255; dutyCycle++) {
-    ledcWrite(pwmChannel, dutyCycle);
+    ledcWrite(ledPin, dutyCycle);
     delay(10);
   }
 
-  // Decrease brightness
+  // Fade out
   for (int dutyCycle = 255; dutyCycle >= 0; dutyCycle--) {
-    ledcWrite(pwmChannel, dutyCycle);
+    ledcWrite(ledPin, dutyCycle);
     delay(10);
   }
 }
