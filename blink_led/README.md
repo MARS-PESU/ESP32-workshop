@@ -83,6 +83,14 @@ void loop() {
 
 ---
 
+## Circuit
+
+<img width="726" height="525" alt="image" src="https://github.com/user-attachments/assets/6b2d98f0-6c17-4ca6-82bd-52a946a78e88" />
+
+
+
+---
+
 ## Output Preview
 
 ![Ultrasonic Sensor Output](https://github.com/user-attachments/assets/f28ab9ca-6c60-4bc6-b808-31200c614c7b)
