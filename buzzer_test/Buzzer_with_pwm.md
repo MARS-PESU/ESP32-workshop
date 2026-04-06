@@ -1,4 +1,4 @@
-''' cpp
+``` cpp
 // ESP32 PWM Buzzer Example
 // Connect buzzer + to GPIO 25
 // Connect buzzer - to GND
@@ -45,4 +45,4 @@ void loop() {
     currentTune = 0;
   }
 }
-'''
+```
