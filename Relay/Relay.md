@@ -104,3 +104,6 @@ This activity introduces:
 **digital control → physical switching → real-world interaction**
 
 which is essential in smart product and spatial design.
+
+![WhatsApp Image 2026-04-07 at 2 36 25 PM](https://github.com/user-attachments/assets/cbb7fc28-158a-428c-8bf1-24c5b14a6b7c)
+
