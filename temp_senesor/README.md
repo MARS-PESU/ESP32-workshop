@@ -18,6 +18,11 @@ This is useful for creating **smart environments, responsive installations, and 
 
 ---
 
+## Circuit
+
+<img width="506" height="348" alt="image" src="https://github.com/user-attachments/assets/69c4247f-d8af-4336-8e0b-ff5995cc2c27" />
+
+
 ## Components Used
 
 - ESP32 board
