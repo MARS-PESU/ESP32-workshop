@@ -17,6 +17,12 @@ This helps in understanding how movement and motion can be integrated into inter
 
 ---
 
+## Circuit
+
+<img width="951" height="618" alt="image" src="https://github.com/user-attachments/assets/5f9faf00-7eeb-4226-8707-7f4e6001544b" />
+
+
+
 ## Components Used
 
 - ESP32 board
