@@ -1,97 +1,123 @@
-# Radar esp32 pbased
-first 
+# Radar ESP32 powered
 
-``` cpp
+
+```cpp
 #include <WiFi.h>
 #include <WebServer.h>
 #include <ESP32Servo.h>
 
-const char* ssid = "herman";
-const char* password = "12345678";
+// ================= WIFI =================
+const char* ssid = "YOUR_SSID";
+const char* password = "YOUR_PSWD";
+
+// ================= PINS =================
+#define LED 2
+#define TrigPin 5
+#define EchoPin 18
+#define SoundSpeed 0.034
 
 WebServer server(80);
-Servo radarServo;
+Servo servo;
 
-const int trigPin = 5;
-const int echoPin = 18;
-const int servoPin = 13;
+// ================= GLOBALS =================
+float distance = 0;
+unsigned long previousMillis = 0;
+unsigned long currentMillis;
+int period = 80;
+int servoAngle = 90;
+bool servoDirection = true;
 
-int angle = 0;
-int direction = 1;
+// ================= WEB =================
+void handleRoot() {
+  server.send(200, "text/plain", "ESP32 Radar API Running");
+}
 
-long getDistance() {
-  digitalWrite(trigPin, LOW);
+// 🔥 FIXED: CORS ENABLED
+void handleDistance() {
+  String data = "[\"" + String(distance) + "\",\"" + String(servoAngle) + "\"]";
+
+  server.sendHeader("Access-Control-Allow-Origin", "*");
+  server.sendHeader("Access-Control-Allow-Methods", "GET");
+  server.sendHeader("Access-Control-Allow-Headers", "*");
+
+  server.send(200, "application/json", data);
+}
+
+// ================= SENSOR =================
+void readDistance() {
+  digitalWrite(TrigPin, LOW);
   delayMicroseconds(2);
-
-  digitalWrite(trigPin, HIGH);
+  digitalWrite(TrigPin, HIGH);
   delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+  digitalWrite(TrigPin, LOW);
 
-  long duration = pulseIn(echoPin, HIGH, 30000);
-  long distance = duration * 0.034 / 2;
+  long duration = pulseIn(EchoPin, HIGH, 30000); // timeout
 
-  if (distance == 0 || distance > 200) {
-    distance = 200;
+  if (duration == 0) return;
+
+  distance = duration * SoundSpeed / 2;
+}
+
+// ================= SERVO =================
+void updateServo() {
+  currentMillis = millis();
+
+  if (servoAngle >= 165) servoDirection = false;
+  if (servoAngle <= 15)  servoDirection = true;
+
+  if (currentMillis - previousMillis >= period) {
+
+    servoAngle += (servoDirection ? 1 : -1);
+    servo.write(servoAngle);
+
+    readDistance();
+
+    Serial.print("Distance: ");
+    Serial.print(distance);
+    Serial.print(" cm | Angle: ");
+    Serial.println(servoAngle);
+
+    previousMillis = currentMillis;
   }
-
-  return distance;
 }
 
-void handleData() {
-  long distance = getDistance();
-
-  String json = "{";
-  json += "\"angle\":" + String(angle) + ",";
-  json += "\"distance\":" + String(distance);
-  json += "}";
-
-  server.send(200, "application/json", json);
-}
-
+// ================= SETUP =================
 void setup() {
   Serial.begin(115200);
 
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
+  pinMode(TrigPin, OUTPUT);
+  pinMode(EchoPin, INPUT);
+  pinMode(LED, OUTPUT);
 
-  radarServo.attach(servoPin);
+  servo.attach(13);
+  servo.write(servoAngle);
 
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
 
-  Serial.print("Connecting to WiFi");
-
   while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
+    digitalWrite(LED, !digitalRead(LED));
+    delay(300);
     Serial.print(".");
   }
 
-  Serial.println();
-  Serial.println("Connected to WiFi");
+  digitalWrite(LED, HIGH);
+
+  Serial.println("\nConnected!");
   Serial.print("ESP32 IP Address: ");
   Serial.println(WiFi.localIP());
 
-  server.on("/data", handleData);
+  // Routes
+  server.on("/", handleRoot);
+  server.on("/readDistance", handleDistance);
 
   server.begin();
+  Serial.println("HTTP server started");
 }
 
+// ================= LOOP =================
 void loop() {
   server.handleClient();
-
-  radarServo.write(angle);
-
-  angle += direction;
-
-  if (angle >= 180) {
-    direction = -1;
-  }
-
-  if (angle <= 0) {
-    direction = 1;
-  }
-
-  delay(30);
+  updateServo();
 }
-
-// ESP32.ino
 ```
