@@ -1,114 +1,101 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ESP32 Radar</title>
-  <style>
-    body {
-      margin: 0;
-      background: black;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-    }
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    canvas {
-      display: block;
-      margin: auto;
-      background: black;
-    }
-  </style>
+<style>
+  body {
+    font-family: sans-serif;
+    text-align: center;
+    background: black;
+    color: #00ff00;
+  }
+  h1 { font-size: 40px; }
+  p { font-size: 25px; }
+  canvas {
+    background: black;
+    margin-top: 20px;
+  }
+</style>
 </head>
+
 <body>
-  <canvas id="radarCanvas"></canvas>
 
-  <script>
-    const canvas = document.getElementById('radarCanvas');
-    const ctx = canvas.getContext('2d');
+<h1>ESP32 Radar (Laptop View)</h1>
+<p>Distance: <span id="_CM">0</span> cm</p>
+<p>Angle: <span id="_ANGLE">0</span>°</p>
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+<canvas id="radar" width="800" height="500"></canvas>
 
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height;
-    const radius = Math.min(canvas.width / 2, canvas.height - 50);
+<script>
+// 🔴 CHANGE THIS TO YOUR ESP32 IP
+const ESP_IP = "http://10.68.64.16";
 
-    let sweepAngle = 0;
-    let detectedDistance = 0;
+let angle = 0;
+let distance = 0;
 
-    async function fetchRadarData() {
-      try {
-        const response = await fetch('http://192.168.1.100/data');
-        const data = await response.json();
+// ================= FETCH DATA =================
+setInterval(() => {
+  fetch(ESP_IP + "/readDistance")
+    .then(res => res.json())
+    .then(data => {
+      distance = parseInt(data[0]);
+      angle = parseInt(data[1]);
 
-        sweepAngle = data.angle;
-        detectedDistance = data.distance;
-      } catch (error) {
-        console.log('Error fetching radar data');
-      }
-    }
+      document.getElementById("_CM").innerText = distance;
+      document.getElementById("_ANGLE").innerText = angle;
+    })
+    .catch(err => console.log("ESP32 not reachable"));
+}, 50);
 
-    function drawRadar() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+// ================= CANVAS =================
+const canvas = document.getElementById("radar");
+const ctx = canvas.getContext("2d");
 
-      ctx.strokeStyle = 'lime';
-      ctx.lineWidth = 2;
+function drawRadar() {
+  // fade effect
+  ctx.fillStyle = "rgba(0,0,0,0.2)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      // Radar circles
-      for (let r = radius / 4; r <= radius; r += radius / 4) {
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, r, Math.PI, 2 * Math.PI);
-        ctx.stroke();
-      }
+  const cx = canvas.width / 2;
+  const cy = canvas.height;
 
-      // Radar lines
-      for (let i = 0; i <= 180; i += 30) {
-        const rad = (i * Math.PI) / 180;
-        const x = centerX + radius * Math.cos(Math.PI - rad);
-        const y = centerY - radius * Math.sin(rad);
+  ctx.strokeStyle = "#00ff00";
+  ctx.lineWidth = 2;
 
-        ctx.beginPath();
-        ctx.moveTo(centerX, centerY);
-        ctx.lineTo(x, y);
-        ctx.stroke();
-      }
+  // radar arcs
+  for (let r = 100; r <= 300; r += 100) {
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, Math.PI, 2 * Math.PI);
+    ctx.stroke();
+  }
 
-      // Sweep line
-      const radarRad = (sweepAngle * Math.PI) / 180;
-      const sweepX = centerX + radius * Math.cos(Math.PI - radarRad);
-      const sweepY = centerY - radius * Math.sin(radarRad);
+  // angle line
+  let rad = angle * Math.PI / 180;
+  let x = cx + 300 * Math.cos(rad);
+  let y = cy - 300 * Math.sin(rad);
 
-      ctx.strokeStyle = 'rgba(0,255,0,0.9)';
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(centerX, centerY);
-      ctx.lineTo(sweepX, sweepY);
-      ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(cx, cy);
+  ctx.lineTo(x, y);
+  ctx.stroke();
 
-      // Object point
-      if (detectedDistance < 200) {
-        const scaledDistance = (detectedDistance / 200) * radius;
+  // object detection
+  if (distance < 40) {
+    let d = distance * 5;
+    let ox = cx + d * Math.cos(rad);
+    let oy = cy - d * Math.sin(rad);
 
-        const objX = centerX + scaledDistance * Math.cos(Math.PI - radarRad);
-        const objY = centerY - scaledDistance * Math.sin(radarRad);
+    ctx.fillStyle = "red";
+    ctx.beginPath();
+    ctx.arc(ox, oy, 5, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+}
 
-        ctx.fillStyle = 'red';
-        ctx.beginPath();
-        ctx.arc(objX, objY, 8, 0, Math.PI * 2);
-        ctx.fill();
-      }
+// redraw loop
+setInterval(drawRadar, 50);
+</script>
 
-      // Text
-      ctx.fillStyle = 'lime';
-      ctx.font = '20px Arial';
-      ctx.fillText('Angle: ' + sweepAngle + '°', 20, 30);
-      ctx.fillText('Distance: ' + detectedDistance + ' cm', 20, 60);
-
-      requestAnimationFrame(drawRadar);
-    }
-
-    setInterval(fetchRadarData, 100);
-    drawRadar();
-  </script>
 </body>
 </html>
-
-index.html
