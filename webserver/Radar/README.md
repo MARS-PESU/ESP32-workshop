@@ -1,5 +1,10 @@
 # Radar ESP32 powered
 
+## Circuit 
+
+<img width="1125" height="771" alt="image" src="https://github.com/user-attachments/assets/a09f4a9c-67a0-472d-a454-812d81e26553" />
+
+## Code 
 
 ```cpp
 #include <WiFi.h>
